@@ -22,6 +22,11 @@ var/
 *.egg
 .eggs/
 
+.env
+
+#development db
+db.sqlite3
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -47,6 +52,7 @@ coverage.xml
 # Developers
 *.sw*
 .DS_Store
+.vscode
 
 # example database
 drf_example
