@@ -4,21 +4,25 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from .models import Post
 from .serializers import PostSerializer
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from core.pagination import Pagination
 # Create your views here.
 
 
 class PostListApiView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    pagination_class = Pagination
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
-    authentication_classes = (SessionAuthentication,)
 
-    # @permission_classes([AllowAny])
-    def get(self, request, *args, **kwargs):
-        # is user loged in?
-        if request.user.is_authenticated:
-            print("User is authenticated")
-        else:
-            print("User is not authenticated")
-        return Response(self.serializer_class(self.get_queryset(), many=True).data)
+class PostRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.author != request.user:
+            return Response({'message': 'You are not the author of this post.'}, status=403)
+        return super().delete(request, *args, **kwargs)

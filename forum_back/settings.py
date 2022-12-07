@@ -102,9 +102,15 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer'
+}
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',)
+        'rest_framework_simplejwt.authentication.JWTAuthentication',),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
 
 REST_USE_JWT = True
@@ -134,7 +140,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-# Database
+# Databas
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
