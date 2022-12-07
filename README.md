@@ -3,6 +3,8 @@
 
 To start development:
 
+Get .env file from the secret source -> paste it into root folder
+
 - `git clone`
 - `python3 manage.py migrate`
 - `python3 manage.py createsuperuser`
