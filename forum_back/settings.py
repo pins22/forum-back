@@ -48,12 +48,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'rest_framework',
+    'rest_framework.authtoken',
     # ... include the providers you want to enable:
+    'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
+    'posts',
+    'users',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +101,15 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',)
+}
+
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'auth_token'
+JWT_AUTH_REFRESH_COOKIE = 'refresh_token'
 
 WSGI_APPLICATION = 'forum_back.wsgi.application'
 
