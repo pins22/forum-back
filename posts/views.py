@@ -2,7 +2,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from .models import Post
-from .serializers import PostSerializer
+from .serializers import PostSerializer, PostCreateSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from core.pagination import Pagination
@@ -18,10 +18,10 @@ class PostListApiView(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         data['author'] = request.user.id
-        serializer = PostSerializer(data=data)
+        serializer = PostCreateSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+            post = serializer.save()
+            return Response(PostSerializer(post).data, status=201)
         return Response(serializer.errors, status=400)
 
 
