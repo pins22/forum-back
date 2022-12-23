@@ -35,7 +35,7 @@ DEBUG = env('DEBUG')
 SECRET_KEY = 'django-insecure-*-9drwjm9x!@@%kihbh#n3&eppqr!y2g8k6hxy+m5yqgu@ju(!'
 
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1", "api.dragondrop.online", "dragondrop.online"]
 
 
 # Application definition
