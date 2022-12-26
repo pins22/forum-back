@@ -13,7 +13,7 @@ class PostListApiView(ListCreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     pagination_class = Pagination
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -28,7 +28,7 @@ class PostListApiView(ListCreateAPIView):
 class PostRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    # permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
