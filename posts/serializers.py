@@ -14,10 +14,29 @@ class AuthorSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
 
     author = AuthorSerializer()
+    has_user_upvoted = serializers.SerializerMethodField()
+    has_user_downvoted = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['id', 'title', 'body', 'created_at', 'last_changed',
+                  'author', 'points', 'has_user_upvoted', 'has_user_downvoted']
+
+    def get_has_user_upvoted(self, obj):
+        if not self.context:
+            return False
+        user = self.context.get("user")
+        if user:
+            return obj.upvotes.filter(id=user.id).exists()
+        return False
+
+    def get_has_user_downvoted(self, obj):
+        if not self.context:
+            return False
+        user = self.context.get("user")
+        if user:
+            return obj.downvotes.filter(id=user.id).exists()
+        return False
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
