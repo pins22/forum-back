@@ -5,11 +5,13 @@ from django.contrib.auth.models import User
 
 class Post(models.Model):
     title = models.CharField(max_length=1024)
-    body = models.TextField()
+    body = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_changed = models.DateTimeField(blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
+    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
+    downvotes = models.ManyToManyField(User, related_name="downvotes", blank=True)
 
     def __str__(self):
         return "Post: " + self.title

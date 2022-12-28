@@ -13,7 +13,6 @@ class GithubLogin(SocialLoginView):
     client_class = OAuth2Client
 
     def post(self, request, *args, **kwargs):
-        print(self.callback_url)
         return super().post(request, *args, **kwargs)
 
 
