@@ -1,8 +1,8 @@
 from rest_framework.decorators import permission_classes
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
-from .models import Post
-from .serializers import PostSerializer, PostCreateSerializer
+from .models import Post, Reply
+from .serializers import PostSerializer, PostCreateSerializer, ReplySerializer, ReplyCreateSerializer
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -46,7 +46,13 @@ class PostRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         if instance.author != request.user:
             return Response({'message': 'You are not the author of this post.'}, status=403)
-        return super().patch(request, *args, **kwargs)
+
+        serializer = PostCreateSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(PostSerializer(instance).data, status=200)
+        return Response(serializer.errors, status=400)
 
 
 class PostVoteView(UpdateAPIView):
@@ -83,3 +89,48 @@ class PostVoteView(UpdateAPIView):
                 instance.points -= 1
         instance.save()
         return Response(PostSerializer(instance, context={"user": request.user}).data, status=200)
+
+
+class ReplyListApiView(ListCreateAPIView):
+    queryset = Reply.objects.all()
+    serializer_class = ReplySerializer
+    pagination_class = Pagination
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        data['author'] = request.user.id
+        data['post'] = kwargs.get('post_pk')
+        serializer = ReplyCreateSerializer(data=data)
+        if serializer.is_valid():
+            post = serializer.save()
+            return Response(PostSerializer(post).data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+class ReplyRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
+    queryset = Reply.objects.all()
+    serializer_class = ReplySerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ReplySerializer(instance, context={'user': request.user})
+        return Response(serializer.data, status=200)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.author != request.user:
+            return Response({'message': 'You are not the author of this reply.'}, status=403)
+        return super().delete(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.author != request.user:
+            return Response({'message': 'You are not the author of this reply.'}, status=403)
+        serializer = ReplyCreateSerializer(
+            instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(ReplySerializer(instance).data, status=200)
+        return Response(serializer.errors, status=400)
