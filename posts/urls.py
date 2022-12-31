@@ -6,8 +6,8 @@ urlpatterns = [
     path('posts/<int:pk>/', PostRetrieveUpdateDeleteApiView.as_view()),
     path('posts/<int:pk>/vote', PostVoteView.as_view()),
     path('posts/<int:post_pk>/reply/', ReplyListApiView.as_view()),
-    path('posts/<int:post_pk>/reply/<int:pk>',
+    path('posts/reply/<int:pk>',
          ReplyRetrieveUpdateDeleteApiView.as_view()),
-    path('posts/<int:post_pk>/reply/<int:pk>/vote', ReplyVoteView.as_view()),
+    path('posts/reply/<int:pk>/vote', ReplyVoteView.as_view()),
 
 ]
