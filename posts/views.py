@@ -107,6 +107,17 @@ class ReplyListApiView(ListCreateAPIView):
             return Response(PostSerializer(post).data, status=201)
         return Response(serializer.errors, status=400)
 
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(post=kwargs.get('post_pk'))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = ReplySerializer(
+                page, many=True, context={'user': request.user})
+            return self.get_paginated_response(serializer.data)
+        serializer = ReplySerializer(
+            queryset, many=True, context={'user': request.user})
+        return Response(serializer.data, status=200)
+
 
 class ReplyRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
     queryset = Reply.objects.all()
@@ -134,3 +145,39 @@ class ReplyRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(ReplySerializer(instance).data, status=200)
         return Response(serializer.errors, status=400)
+
+
+class ReplyVoteView(UpdateAPIView):
+    queryset = Reply.objects.all()
+    serializer_class = ReplySerializer
+    permission_classes = (IsAuthenticated,)
+
+    def patch(self, request: Request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.query_params
+        if not data.get('type'):
+            return Response({'message': 'You must provide a type.'}, status=400)
+        if data.get('type') == 'up':
+            if instance.upvotes.filter(id=request.user.id).exists():
+                instance.upvotes.remove(request.user)
+                instance.points -= 1
+            elif instance.downvotes.filter(id=request.user.id).exists():
+                instance.downvotes.remove(request.user)
+                instance.upvotes.add(request.user)
+                instance.points += 2
+            else:
+                instance.upvotes.add(request.user)
+                instance.points += 1
+        elif data.get('type') == 'down':
+            if instance.downvotes.filter(id=request.user.id).exists():
+                instance.downvotes.remove(request.user)
+                instance.points += 1
+            elif instance.upvotes.filter(id=request.user.id).exists():
+                instance.upvotes.remove(request.user)
+                instance.downvotes.add(request.user)
+                instance.points -= 2
+            else:
+                instance.downvotes.add(request.user)
+                instance.points -= 1
+        instance.save()
+        return Response(ReplySerializer(instance, context={"user": request.user}).data, status=200)

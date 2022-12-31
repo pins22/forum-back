@@ -27,6 +27,9 @@ class Reply(models.Model):
     last_changed = models.DateTimeField(blank=True, null=True, default=None)
     points = models.IntegerField(default=0)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    upvotes = models.ManyToManyField(User, related_name="reply_upvotes", blank=True)
+    downvotes = models.ManyToManyField(
+        User, related_name="reply_downvotes", blank=True)
 
     def __str__(self):
         return "Reply: " + self.body
