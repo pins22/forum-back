@@ -137,6 +137,10 @@ class ReplyRetrieveUpdateDeleteApiView(RetrieveUpdateDestroyAPIView):
 
     def patch(self, request, *args, **kwargs):
         instance = self.get_object()
+        if len(request.data.keys()) == 1 and 'accepted_answer' in request.data and request.user == instance.post.author:
+            instance.accepted_answer = request.data.get('accepted_answer')
+            instance.save()
+            return Response(ReplySerializer(instance).data, status=200)
         if instance.author != request.user:
             return Response({'message': 'You are not the author of this reply.'}, status=403)
         serializer = ReplyCreateSerializer(
