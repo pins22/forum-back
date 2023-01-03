@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.contrib.auth.models import User
+from users.models import UserProfile
 # Create your models here.
 
 
@@ -9,11 +9,11 @@ class Post(models.Model):
     body = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_changed = models.DateTimeField(blank=True, null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
-    upvotes = models.ManyToManyField(User, related_name="upvotes", blank=True)
+    upvotes = models.ManyToManyField(UserProfile, related_name="upvotes", blank=True)
     downvotes = models.ManyToManyField(
-        User, related_name="downvotes", blank=True)
+        UserProfile, related_name="downvotes", blank=True)
 
     def __str__(self):
         return "Post: " + self.title
@@ -26,11 +26,11 @@ class Reply(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_changed = models.DateTimeField(blank=True, null=True, default=None)
     points = models.IntegerField(default=0)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     upvotes = models.ManyToManyField(
-        User, related_name="reply_upvotes", blank=True)
+        UserProfile, related_name="reply_upvotes", blank=True)
     downvotes = models.ManyToManyField(
-        User, related_name="reply_downvotes", blank=True)
+        UserProfile, related_name="reply_downvotes", blank=True)
     accepted_answer = models.BooleanField(default=False)
 
     def __str__(self):

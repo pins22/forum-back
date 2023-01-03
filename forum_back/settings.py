@@ -35,7 +35,8 @@ DEBUG = env('DEBUG')
 SECRET_KEY = 'django-insecure-*-9drwjm9x!@@%kihbh#n3&eppqr!y2g8k6hxy+m5yqgu@ju(!'
 
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1", "api.dragondrop.online", "dragondrop.online"]
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1",
+                 "api.dragondrop.online", "dragondrop.online"]
 
 
 # Application definition
@@ -68,6 +69,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = (
 #   'http://localhost:3000',
 # )
+
+AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

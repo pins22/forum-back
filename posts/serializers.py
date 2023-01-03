@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from .models import Post, Reply
 from users.serializers import UserSerializer
-from django.contrib.auth.models import User
+from users.models import UserProfile
 
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserProfile
         fields = ["id", "date_joined",
                   "first_name",  "last_name", "username"]
 
