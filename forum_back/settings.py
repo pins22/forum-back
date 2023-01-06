@@ -35,7 +35,8 @@ DEBUG = env('DEBUG')
 SECRET_KEY = 'django-insecure-*-9drwjm9x!@@%kihbh#n3&eppqr!y2g8k6hxy+m5yqgu@ju(!'
 
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1", "api.dragondrop.online", "dragondrop.online"]
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1",
+                 "api.dragondrop.online", "dragondrop.online"]
 
 
 # Application definition
@@ -202,3 +203,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'host.docker.internal'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "admin@dragondrop.online"
+EMAIL_HOST_PASSWORD = "admin"
+EMAIL_USE_TLS = not DEBUG

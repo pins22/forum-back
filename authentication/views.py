@@ -2,6 +2,9 @@ from allauth.socialaccount.providers.github.views import GitHubOAuth2Adapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 import environ
 
 env = environ.Env()
@@ -20,3 +23,9 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     callback_url = env("GOOGLE_CALLBACK_URL")
     client_class = OAuth2Client
+
+
+class CredentialsCallbackView(APIView):
+
+    def post(self, request, *args, **kwargs):
+        return Response({}, status=status.HTTP_200_OK)

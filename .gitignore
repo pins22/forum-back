@@ -56,3 +56,5 @@ coverage.xml
 
 # example database
 drf_example
+
+docker-data
