@@ -1,0 +1,57 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/api
+    working_dir: /api
+    command: python3 manage.py runserver 0.0.0.0:8080
+    restart: always
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    restart: always
+    ports:
+      - 5432:5432
+
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: dragondrop.online
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "465:465"
+      - "993:993"
+    volumes:
+      - ./docker-data/dms/mail-data/:/var/mail/
+      - ./docker-data/dms/mail-state/:/var/mail-state/
+      - ./docker-data/dms/mail-logs/:/var/log/mail/
+      - ./docker-data/dms/config/:/tmp/docker-mailserver/
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      # - SSL_TYPE=letsencrypt
+      - ENABLE_SPAMASSASSIN=1
+      - SPAMASSASSIN_SPAM_TO_INBOX=1
+      - ENABLE_CLAMAV=1
+      - ENABLE_FAIL2BAN=1
+      - ENABLE_POSTGREY=1
+      - ENABLE_SASLAUTHD=0
+      - ONE_DIR=0
+      - PERMIT_DOCKER=host
+      # AWS SES
+      # - RELAY_HOST=
+      # - RELAY_PORT=587
+      # - RELAY_USER=
+      # - RELAY_PASSWORD=
+    cap_add:
+      - NET_ADMIN
+    restart: always
