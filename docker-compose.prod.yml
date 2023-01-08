@@ -1,17 +1,22 @@
 version: '3'
 services:
-  web:
-    build: .
+  api:
+    build: ./forum_back
     ports:
       - 8080:8080
     volumes:
-      - .:/api
+      - ./forum_back:/api
     working_dir: /api
-    command: python3 manage.py runserver 0.0.0.0:8080
+    command: >
+      sh -c 'python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8080'
     restart: always
+    depends_on:
+      - db
+      - mailserver
 
   db:
-    image: postgres
+    image: postgres:12.13-alpine
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -37,6 +42,7 @@ services:
       - ./docker-data/dms/mail-logs/:/var/log/mail/
       - ./docker-data/dms/config/:/tmp/docker-mailserver/
       - /etc/localtime:/etc/localtime:ro
+      - /etc/letsencrypt:/etc/letsencrypt
     environment:
       # - SSL_TYPE=letsencrypt
       - ENABLE_SPAMASSASSIN=1
